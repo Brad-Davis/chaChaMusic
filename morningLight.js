@@ -22,7 +22,7 @@ socket.on("state", (state) => {
     }
 });
 
-const globalEQ = new Tone.EQ3(-5, 0, 0);
+const globalEQ = new Tone.EQ3(-5, -3, -5);
 globalEQ.toDestination();
 
 const loadingEq = new Tone.EQ3(-5, 0, 0);
@@ -41,32 +41,36 @@ const loadingFade = new Tone.CrossFade().connect(delayLoading);
 const baseUrl = "audio/";
 const activeCount = 3;
 const activeState = new Tone.Players({
-    0: baseUrl + "morningLightActive1.wav",
-    1: baseUrl + "morningLightActive2.wav", 
-    2: baseUrl + "morningLightActive3.wav",
+    "0": baseUrl + "morningLightActive1.wav",
+    "1": baseUrl + "morningLightActive2.wav", 
+    "2": baseUrl + "morningLightActive3.wav",
 }).connect(crossFade.b);
 
 // Create an EQ3 effect
 const eqIdle = new Tone.EQ3(-10, 0, -3);
 
 const idleCount = 4;
-const pitchShiftIdle = new Tone.PitchShift(12).connect(crossFade.a);
-pitchShiftIdle.windowSize = 0.03;
-pitchShiftIdle.wet.rampTo(0, 0);
+const multiBandIdle = new Tone.MultibandCompressor({
+	lowFrequency: 200,
+	highFrequency: 2500,
+	high: {
+		threshold: -20
+	}
+}).connect(crossFade.a);
 const idleState = new Tone.Players({
-    0: baseUrl + "morningLightIdle1.wav",
-    1: baseUrl + "morningLightIdle2.wav", 
-    2: baseUrl + "morningLightIdle3.wav",
-    3: baseUrl + "morningLightIdle4.wav",
+    "0": baseUrl + "morningLightIdle1.wav",
+    "1": baseUrl + "morningLightIdle2.wav", 
+    "2": baseUrl + "morningLightIdle3.wav",
+    "3": baseUrl + "morningLightIdle4.wav",
 }).connect(eqIdle);
 
-eqIdle.connect(pitchShiftIdle);
+eqIdle.connect(multiBandIdle);
 
-const loadingUrl = baseUrl + "/LoadingLayers/";
+const loadingUrl = baseUrl + "LoadingLayers/";
 const loadingLayers = 
     [new Tone.Player(loadingUrl + "LL1.wav").connect(loadingFade.a),
     new Tone.Player(loadingUrl + "LL2.wav").connect(loadingFade.a), 
-    new Tone.Player(loadingUrl + "LL3 EVIL.wav").connect(loadingFade.a), 
+    new Tone.Player(loadingUrl + "LL3EVIL.wav").connect(loadingFade.a), 
     new Tone.Player(loadingUrl + "LL4.wav").connect(loadingFade.a), 
     new Tone.Player(loadingUrl + "LL5.wav").connect(loadingFade.a), 
     new Tone.Player(loadingUrl + "LL6.wav").connect(loadingFade.a), 
@@ -301,6 +305,13 @@ function stopAllForPlayers(players, length) {
             console.log("Error in stopping player " + i);
             console.log(player);
             console.log(error);
+            try {
+                player.stop(1);
+            } catch (error) {
+                console.log("Error in stopping player " + i + " with fade out");
+                console.log(player);
+                console.log(error);
+            }
         }
     }
 }
