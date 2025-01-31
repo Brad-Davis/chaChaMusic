@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Page</title>
+  <script type="module" src="morningLight.js"></script>
+</head>
+<body>
+  <h1>Welcome to My Page</h1>
+  <p>This is a basic HTML page that loads the morningLight.js file.</p>
+  <button id="playButton">Start Audio</button>
+  <button id="idleButton">Start Idle</button>
+  <button id="loadingButton">Start Loading</button>
+  <button id="activeButton">Start Active</button>
+  <input type="range" id="crossfadeSlider" min="0" max="1" step="0.01" value="0" />
+  <input type="range" id="playheadSlider" min="0" max="100" step="1" value="0" />
+  <br><br>
+  <input type="range" id="globalEq" min="-25" max="0" step="0.1" value="0" />
+
+  <p>STATE: <span id="state"></span></p>
+
+
+</body>
+</html>
